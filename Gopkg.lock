@@ -8,6 +8,12 @@
   version = "v1.1.0"
 
 [[projects]]
+  name = "github.com/google/uuid"
+  packages = ["."]
+  revision = "064e2069ce9c359c118179501254f67d7d37ba24"
+  version = "0.2"
+
+[[projects]]
   name = "github.com/montanaflynn/stats"
   packages = ["."]
   revision = "eeaced052adbcfeea372c749c281099ed7fdaa38"
@@ -28,6 +34,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "b1fe6ef3517d6d1c906939f79bea069adce9ae166aa1af109f1a4d1c3d9ad78f"
+  inputs-digest = "38ae85be926243b93803376563ac3d6fe5105f4d8dd60946cc2986cae4230c14"
   solver-name = "gps-cdcl"
   solver-version = 1
