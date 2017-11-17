@@ -7,7 +7,7 @@ import (
 )
 
 func TestTruncate(t *testing.T) {
-	algorithm := Algorithm{}
+	algorithm := Algorithm{truncationComparator: ObjectiveComparator}
 	population := []Tuple{
 		{nil, &Evaluation{[]float64{10.0}, []float64{0}}},
 		{nil, &Evaluation{[]float64{5.0}, []float64{0}}},
@@ -23,7 +23,7 @@ func TestTruncate(t *testing.T) {
 
 func TestEvolve(t *testing.T) {
 	rnd := rand.New(rand.NewSource(0))
-	problem := TestProblem{rnd}
+	problem := testProblem{rnd}
 	selection := TournamentSelection{Size: 2, Rnd: rnd, Comparator: ObjectiveComparator}
 
 	operators := []Operator{}
@@ -38,14 +38,26 @@ func TestEvolve(t *testing.T) {
 	assert.Len(t, children, 2)
 }
 
-type TestProblem struct {
+type testProblem struct {
 	rnd *rand.Rand
 }
 
-func (p TestProblem) Evaluate(solution Solution) Evaluation {
-	// TODO
+func (p testProblem) Evaluate(solution Solution) Evaluation {
+	return Evaluation{}
 }
 
-func (p TestProblem) RandomSolution() Solution {
-	// TODO
+func (p testProblem) RandomSolution() Solution {
+	return testSolution{}
+}
+
+type testSolution struct {
+
+}
+
+func (b testSolution) Id() string {
+	return ""
+}
+
+func (b testSolution) Checksum() string {
+	return ""
 }
