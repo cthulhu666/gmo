@@ -8,23 +8,23 @@ import (
 func TestRandomSolution(t *testing.T) {
 	p := problem(t)
 	s := p.RandomSolution()
-	assert.Len(t, s.(board).getColumns(), 10)
+	assert.Len(t, s.(board).Columns(), 10)
 }
 
 
 func TestColumnClashes(t *testing.T) {
-	b := board{[]int{0, 1, 1, 2, 2, 3, 4, 7}}
+	b := newBoard([]int{0, 1, 1, 2, 2, 3, 4, 7})
 	assert.Equal(t, 2, b.rowClashes())
 }
 
 func TestDiagonalClashes(t *testing.T) {
-	b := board{[]int{0, 1, 4, 3, 7, 0, 5, 0}}
+	b := newBoard([]int{0, 1, 4, 3, 7, 0, 5, 0})
 	assert.Equal(t, 4, b.diagonalClashes())
-	b = board{[]int{0, 1, 0, 1, 1, 0, 0, 0}}
+	b = newBoard([]int{0, 1, 0, 1, 1, 0, 0, 0})
 	assert.Equal(t, 4, b.diagonalClashes())
-	b = board{[]int{0, 1, 0, 1, 0, 1, 0, 1}}
+	b = newBoard([]int{0, 1, 0, 1, 0, 1, 0, 1})
 	assert.Equal(t, 7, b.diagonalClashes())
-	b = board{[]int{0, 1, 2, 3, 4, 5, 6, 7}}
+	b = newBoard([]int{0, 1, 2, 3, 4, 5, 6, 7})
 	assert.Equal(t, 7, b.diagonalClashes())
 }
 
