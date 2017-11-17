@@ -3,7 +3,6 @@ package main
 import (
 	"math/rand"
 	gmo "github.com/cthulhu666/gmo/engine"
-	"fmt"
 )
 
 var rnd = rand.New(rand.NewSource(0))
@@ -79,19 +78,14 @@ func (b board) rowClashes() int {
 }
 
 func (b board) diagonalClashes() int {
+	return diagonalClashes(b, 1) + diagonalClashes(b, -1)
+}
+
+// dir can be either 1 or -1
+func diagonalClashes(b board, dir int) int {
 	clashes := 0
-	d1 := mapWithIndex(b.columns, func(a, i int) int { return a + i })
-	d2 := mapWithIndex(b.columns, func(a, i int) int { return a - i })
-	fmt.Println(d1, d2)
-	m1 := count(d1)
-	m2 := count(d2)
-	fmt.Println(m1, m2)
-	for _, count := range m1 {
-		if count > 1 {
-			clashes += count - 1
-		}
-	}
-	for _, count := range m2 {
+	d := mapWithIndex(b.columns, func(a, i int) int { return a + (i * dir) })
+	for _, count := range count(d) {
 		if count > 1 {
 			clashes += count - 1
 		}
