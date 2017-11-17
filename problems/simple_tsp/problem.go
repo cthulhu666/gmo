@@ -13,14 +13,8 @@ type TravellingSalesmanProblem struct {
 
 func (t TravellingSalesmanProblem) Evaluate(solution gmo.Solution) gmo.Evaluation {
 	route := solution.(route)
-	var constraint float64
-	if t.validateSolution(route) {
-		constraint = 0
-	} else {
-		constraint = 10
-	}
 	objective := float64(t.m.distance(route))
-	return gmo.Evaluation{Constraints: []float64{constraint}, Objectives: []float64{objective}}
+	return gmo.Evaluation{Constraints: []float64{}, Objectives: []float64{objective}}
 }
 
 func (t TravellingSalesmanProblem) RandomSolution() gmo.Solution {

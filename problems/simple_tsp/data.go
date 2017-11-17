@@ -56,12 +56,6 @@ func (r route) Checksum() string {
 	return r.checksum
 }
 
-func (r route) debugChecksum() string {
-	text := fmt.Sprintf("%x", r.Points)
-	checksum := md5.Sum([]byte(text))
-	return fmt.Sprintf("%x", checksum)
-}
-
 func newMap(distances [][]int) Map {
 	return Map{Distances: distances, Size: len(distances)}
 }
