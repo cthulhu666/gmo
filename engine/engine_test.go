@@ -27,7 +27,7 @@ func TestEvolve(t *testing.T) {
 	selection := TournamentSelection{Size: 2, Rnd: rnd, Comparator: ObjectiveComparator}
 
 	operators := []Operator{}
-	a := New(problem, selection, operators)
+	a := New(problem, selection, operators, Configuration{})
 
 	parents := []Solution{
 		problem.RandomSolution(),

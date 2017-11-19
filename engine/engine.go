@@ -9,15 +9,26 @@ import (
 type Algorithm struct {
 	Problem
 	Selection
-	Operators []Operator
+	Operators  []Operator
 	generation int
-	callback Callback
-	//best Tuple
+	callback   Callback
+	Best Tuple
 	truncationComparator Comparator
+	terminationCondition TerminationCondition
 }
 
-func New(problem Problem, selection Selection, operators []Operator) Algorithm {
-	return Algorithm{Problem: problem, Selection: selection, Operators: operators, truncationComparator: ObjectiveComparator}
+type Configuration struct {
+	TerminationCondition TerminationCondition
+	MaxGenerations int
+}
+
+
+func New(problem Problem, selection Selection, operators []Operator, cfg Configuration) Algorithm {
+	if cfg.TerminationCondition == nil {
+		cfg.TerminationCondition = MaxGenerationsTerinationCondition(cfg.MaxGenerations)
+	}
+	return Algorithm{Problem: problem, Selection: selection, Operators: operators,
+		truncationComparator: ObjectiveComparator, terminationCondition: cfg.TerminationCondition}
 }
 
 type Callback = func(population []Tuple)
@@ -28,15 +39,26 @@ type Selection interface {
 
 type Comparator = func(*Evaluation, *Evaluation) int
 
+type TerminationCondition = func(*Algorithm) bool
+
+func MaxGenerationsTerinationCondition(maxGen int) TerminationCondition {
+	if maxGen < 0 {
+		log.Panic("maxGen should be greater than 0")
+	}
+	return func(algorithm *Algorithm) bool {
+		return algorithm.generation >= maxGen
+	}
+}
+
 type Problem interface {
 	Evaluate(solution Solution) Evaluation
 	RandomSolution() Solution
 }
 
-type Operator = func ([]Solution) ([]Solution, error)
+type Operator = func([]Solution) ([]Solution, error)
 
 type Evaluation struct {
-	Objectives 	[]float64
+	Objectives  []float64
 	Constraints []float64
 }
 
@@ -45,7 +67,10 @@ type Solution interface {
 	Checksum() string
 }
 
-type Tuple struct{Solution; *Evaluation}
+type Tuple struct {
+	Solution;
+	*Evaluation
+}
 
 func (t Tuple) String() string {
 	return fmt.Sprintf("%v, %.0f", t.Solution, t.Objectives)
@@ -112,9 +137,8 @@ func (a Algorithm) evaluateAll(population []Tuple) []Tuple {
 	return tuples
 }
 
-func (a Algorithm) terminated() bool {
-	// a.best.Objectives[0] <= 291 ||
-	return a.generation >= 50
+func (a *Algorithm) terminated() bool {
+	return a.generation > 0 && a.terminationCondition(a)
 }
 
 func (a Algorithm) Run(initialPopulation []Solution) {
@@ -127,9 +151,9 @@ func (a Algorithm) Run(initialPopulation []Solution) {
 			break
 		}
 		fmt.Printf("Starting generation %d\n", a.generation)
-		population = a.iterate(population) // FIXME
-		best := population[0]
-		fmt.Printf("Best solution: %s\n", best)
+		population = a.iterate(population)
+		a.Best = population[0]
+		fmt.Printf("Best solution: %s\n", a.Best)
 		a.generation++
 	}
 }
@@ -141,9 +165,10 @@ func (a Algorithm) truncate(population []Tuple, size int) []Tuple {
 }
 
 type SolutionSorting struct {
-	data []Tuple
+	data       []Tuple
 	comparator Comparator
 }
+
 func (s SolutionSorting) Len() int {
 	return len(s.data)
 }
@@ -153,7 +178,6 @@ func (s SolutionSorting) Swap(i, j int) {
 func (s SolutionSorting) Less(i, j int) bool {
 	return s.comparator(s.data[i].Evaluation, s.data[j].Evaluation) < 0
 }
-
 
 func panicOnError(err error) {
 	if err != nil {

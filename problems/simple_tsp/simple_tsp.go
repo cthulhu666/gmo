@@ -24,7 +24,7 @@ func main() {
 	mut, err := mutation(1, rnd); panicOnError(err)
 
 	operators := []gmo.Operator{pmx, mut}
-	algorithm := gmo.New(problem, selection, operators)
+	algorithm := gmo.New(problem, selection, operators, gmo.Configuration{TerminationCondition: isSolved})
 
 	var population []gmo.Solution
 	for i := 0; i < populationSize; i++ {
@@ -32,6 +32,10 @@ func main() {
 	}
 
 	algorithm.Run(population)
+}
+
+func isSolved(algorithm *gmo.Algorithm) bool {
+	return algorithm.Best.Objectives[0] <= 291
 }
 
 func callback(population []gmo.Tuple) {

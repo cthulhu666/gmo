@@ -22,11 +22,15 @@ func main() {
 	mut, err := mutation(1, rnd); panicOnError(err)
 
 	operators := []gmo.Operator{crossover, mut}
-	algorithm := gmo.New(problem, selection, operators)
+	algorithm := gmo.New(problem, selection, operators, gmo.Configuration{TerminationCondition: isSolved})
 
 	population := initialPopulation(problem)
 
 	algorithm.Run(population)
+}
+
+func isSolved(algorithm *gmo.Algorithm) bool {
+	return algorithm.Best.Objectives[0] == 0
 }
 
 // TODO: move to gmo.Algorithm?
